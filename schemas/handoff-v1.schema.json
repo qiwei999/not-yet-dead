@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ninnin:handoff:v1",
+  "title": "ninnin portable handoff v1",
+  "description": "Untrusted saved/public task data. Hashes cover copied bytes, not authorship. No execution or resume authority. Runtime verifier additionally enforces canonical safe paths, exact file inventory and SHA-256 bytes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task", "run", "direction_version", "source_state", "cutoff", "summary", "unconfirmed_side_effects", "permissions", "files"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "task": {
+      "type": "object", "additionalProperties": false, "required": ["id"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "title": {"type": "string"},
+        "version": {"type": "integer", "minimum": 0},
+        "generation": {"type": "integer", "minimum": 0}
+      }
+    },
+    "run": {
+      "type": "object", "additionalProperties": false,
+      "properties": {"id": {"type": "string"}, "state": {"type": "string"}, "generation": {"type": "integer", "minimum": 0}}
+    },
+    "direction_version": {"$ref": "#/$defs/sequence"},
+    "source_state": {
+      "type": "object", "additionalProperties": false, "required": ["task", "run"],
+      "properties": {"task": {"type": "string"}, "run": {"type": "string"}}
+    },
+    "cutoff": {
+      "type": "object", "additionalProperties": false,
+      "required": ["event_seq", "checkpoint_seq", "checkpoint_generation", "checkpoint_version", "checkpoint_at"],
+      "properties": {
+        "event_seq": {"$ref": "#/$defs/sequence"},
+        "checkpoint_seq": {"$ref": "#/$defs/sequence"},
+        "checkpoint_generation": {"$ref": "#/$defs/sequence"},
+        "checkpoint_version": {"$ref": "#/$defs/sequence"},
+        "checkpoint_at": {"type": ["string", "null"]}
+      }
+    },
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["original_goal", "latest_direction", "route", "decisions", "completed", "verified", "changed", "not_done", "risks", "unknowns", "pending_confirmations", "environment", "verification", "next_steps"],
+      "properties": {
+        "original_goal": {}, "latest_direction": {}, "route": {}, "decisions": {}, "completed": {},
+        "verified": {}, "changed": {}, "not_done": {}, "risks": {}, "unknowns": {},
+        "pending_confirmations": {}, "environment": {}, "verification": {}, "next_steps": {}
+      }
+    },
+    "unconfirmed_side_effects": {"type": "array"},
+    "permissions": {"const": {"execute": false, "resume_requires_confirmation": true}},
+    "files": {
+      "type": "array", "minItems": 2, "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["path", "size", "sha256"],
+        "properties": {
+          "path": {"type": "string", "pattern": "^(handoff\\.md|(artifacts|evidence)/[^\\\\:]+)$"},
+          "size": {"type": "integer", "minimum": 0},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    }
+  },
+  "$defs": {"sequence": {"type": ["integer", "null"], "minimum": 0}}
+}

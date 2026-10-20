@@ -1,0 +1,16 @@
+{
+  "task": {
+    "id": "demo-task",
+    "title": "Synthetic report handoff",
+    "state": "paused",
+    "original_goal": "Prepare a short reviewable report",
+    "latest_direction": "Inspect the saved draft before further editing",
+    "artifacts": [
+      {"path": "STATE.md", "approved": true},
+      {"path": "report.txt", "approved": true}
+    ]
+  },
+  "run": {"state": "interrupted"},
+  "events": [],
+  "events_cursor": null
+}

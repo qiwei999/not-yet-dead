@@ -1,0 +1,13 @@
+{
+  "task_id": "demo-task",
+  "data": {
+    "completed": ["A synthetic draft and recovery notes were saved"],
+    "verified": [],
+    "changed": ["report.txt"],
+    "not_done": ["Substantive review of the draft"],
+    "unknowns": ["The draft's claims have not been checked"],
+    "pending_confirmations": [],
+    "next_steps": ["Read the draft and identify missing evidence"],
+    "unconfirmed_side_effects": []
+  }
+}
