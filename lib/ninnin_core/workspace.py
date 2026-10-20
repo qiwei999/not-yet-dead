@@ -35,6 +35,19 @@ def safe_path(root, path):
         raise PermissionError('foreign absolute path is forbidden')
     if not candidate.is_absolute():
         candidate = root / candidate
+    else:
+        # An ancestor may spell this same workspace through an OS alias
+        # (/var on macOS, or an 8.3 name on Windows). Rebase only at the
+        # workspace boundary; do not resolve away links in its suffix.
+        for ancestor in (candidate, *candidate.parents):
+            try:
+                is_root = ancestor.samefile(root)
+            except (FileNotFoundError, NotADirectoryError):
+                continue
+            if is_root:
+                _reject_link(ancestor)
+                candidate = root / candidate.relative_to(ancestor)
+                break
     try:
         relative = candidate.relative_to(root)
     except ValueError as exc:

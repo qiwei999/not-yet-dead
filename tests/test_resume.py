@@ -10,7 +10,7 @@ import unittest
 from ninnin_core.handoff import export_handoff
 from ninnin_core.resume import inspect_project
 
-SCRATCH = Path(tempfile.gettempdir())
+SCRATCH = Path(tempfile.gettempdir()).resolve()
 ROOT = Path(__file__).resolve().parents[1]
 
 

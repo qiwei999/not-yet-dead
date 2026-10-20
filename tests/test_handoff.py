@@ -7,7 +7,7 @@ import shutil
 import tempfile
 import unittest
 
-SCRATCH = Path(tempfile.gettempdir())
+SCRATCH = Path(tempfile.gettempdir()).resolve()
 
 
 class HandoffTests(unittest.TestCase):

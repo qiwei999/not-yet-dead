@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-SCRATCH = Path(tempfile.gettempdir())
+SCRATCH = Path(tempfile.gettempdir()).resolve()
 
 
 class WorkspaceTests(unittest.TestCase):

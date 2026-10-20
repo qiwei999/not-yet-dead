@@ -7,7 +7,7 @@ import unittest
 
 from ninnin_core.store import Store
 
-SCRATCH = Path(tempfile.gettempdir())
+SCRATCH = Path(tempfile.gettempdir()).resolve()
 DIRECTOR = {"provider": "fixture", "model": "director"}
 WORKER = {"provider": "fixture", "model": "worker"}
 

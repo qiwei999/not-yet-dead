@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0 — public portability correction
+
+- Recognize equivalent absolute workspace paths through operating-system
+  ancestor aliases, while retaining traversal, symlink/reparse-point and
+  workspace-boundary checks.
+- Normalize temporary fixture roots so native Windows short names and macOS
+  `/var` aliases do not break path assertions or fault-injection callbacks.
+- Add real-filesystem alias-path and protection regression coverage.
+
 ## 0.3.0 — initial public distribution
 
 - Publish the ninnin standalone handoff skill as **Not yet dead**.
