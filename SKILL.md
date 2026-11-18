@@ -1,7 +1,7 @@
 ---
 name: not-yet-dead
 description: "Use when handing off or resuming stopped agent work. Preserve saved progress, direction and verifiable artifacts."
-version: 0.3.0
+version: 0.4.1
 license: MIT
 ---
 
@@ -19,7 +19,7 @@ Let `<skill-dir>` be its containing directory. Use Python 3.10+ and run:
 
 ```text
 python -B "<skill-dir>/scripts/not_yet_dead.py" doctor
-python -B "<skill-dir>/scripts/not_yet_dead.py" resume --workspace "<project>"
+python -B "<skill-dir>/scripts/not_yet_dead.py" resume --workspace "<project>" --brief
 python -B "<skill-dir>/scripts/not_yet_dead.py" extract --snapshot "<saved-task.json>" --checkpoint "<checkpoint.json>" --workspace "<project>" --out "<new-handoff>"
 python -B "<skill-dir>/scripts/not_yet_dead.py" verify "<handoff>"
 ```
@@ -47,6 +47,17 @@ Recovery notes are looked up only at `recovery/RECOVERY.md` and
 `reports/recovery/RECOVERY.md`; if both exist, choose one explicitly with
 `--recovery`. Approvals default to `DECISIONS.md`. Custom inputs must be canonical
 paths relative to the workspace; see [CLI reference](references/cli.md).
+
+For a small first view, add `--brief`; see [brief contract](references/brief.md).
+It selects only a literal candidate before explicit history headings and keeps
+approval text whole. `review_required` still needs intent/source review.
+`detail_required` returns no excerpts: read the current region and any conflict
+line neighborhood, then related evidence until relevant authority, stops,
+unknown side effects and corrections are clear. Do not automatically reload all
+history or act from an unresolved prefix. Neither status grants execution.
+The 2,000-character allowance excludes JSON metadata; the complete source is
+still scanned. Unsupported layouts may hide corrections from this simple
+scanner. The CLI does not enforce what the receiving agent reads.
 
 Read the user's designated recovery entry, current state and actual approvals
 before relying on semantic memory. Do not create a competing state file.

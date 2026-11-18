@@ -11,14 +11,16 @@ print JSON; argument errors and operational failures return a nonzero status.
 not_yet_dead.py doctor
 ```
 
-Checks Python, importable handoff/resume core, required files and commands.
+Checks Python, importable handoff/resume core, required files (including
+`brief.py`) and commands. Inspect `local_handoff_available`; a missing brief
+file is reported as false even though this diagnostic itself exits 0.
 Does not initialize a Store, create a project, contact a model or repair the
 installation. Its `standalone_revision` is the independent skill revision.
 
 ## resume
 
 ```text
-not_yet_dead.py resume --workspace <directory> [--state STATE.md] [--recovery <relative-file>] [--approvals DECISIONS.md] [--handoff <exact-old-bundle>] [--max-chars 8000]
+not_yet_dead.py resume --workspace <directory> [--state STATE.md] [--recovery <relative-file>] [--approvals DECISIONS.md] [--handoff <exact-old-bundle>] [--max-chars 8000] [--brief]
 ```
 
 Requires an existing state file. Recovery search is limited to
@@ -40,6 +42,16 @@ artifacts are compared as bytes, not decoded as project instructions.
 
 The command does not write the workspace, restore missing files, pick the
 newest bundle, run tests, open a database or start a model.
+
+### Optional literal brief
+
+Add `--brief` for a bounded current-prefix candidate. It keeps the complete
+approval text and source fingerprints, with `review_required` or
+`detail_required`. The latter omits all excerpts and provides original-source
+pointers. Both use exit code 0 and **neither grants execution**. The 2,000-character
+excerpt budget is independent of `--max-chars` and excludes JSON metadata.
+See [the exact brief contract](brief.md), including recognized headings and
+failure-to-detect limitations. For direct imports see [Python API](api.md).
 
 ## extract
 

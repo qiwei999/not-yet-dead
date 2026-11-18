@@ -31,19 +31,24 @@ def main(argv=None):
     resume.add_argument("--approvals",default="DECISIONS.md")
     resume.add_argument("--handoff",type=Path)
     resume.add_argument("--max-chars",type=int,default=8000)
+    resume.add_argument("--brief",action="store_true",help="Literal current-prefix view; no execution authority")
     sub.add_parser("doctor",help="Check the local handoff and resume installation without model calls")
     args=parser.parse_args(argv)
     try:
         if args.command=="resume":
             from .resume import inspect_project
+            if args.brief:
+                from .brief import inspect_brief
+                inspect_project=inspect_brief
             result=inspect_project(args.workspace,handoff=args.handoff,state=args.state,
                                    recovery=args.recovery,approvals=args.approvals,max_chars=args.max_chars)
         elif args.command=="doctor":
             from .resume import inspect_project
             from .handoff import verify_handoff
             core=Path(__file__).absolute().parent
-            required={name:(core/name).is_file() for name in ("cli.py","handoff.py","workspace.py","resume.py")}
-            result={"mode":"read_only_installation_check","standalone_revision":"0.3.0",
+            required={name:(core/name).is_file() for name in ("cli.py","handoff.py","workspace.py","resume.py","brief.py")}
+            from . import __version__
+            result={"mode":"read_only_installation_check","standalone_revision":__version__,
                     "python_executable":sys.executable,"python_version":sys.version.split()[0],
                     "core_path":str(core),"required_files":required,
                     "local_handoff_available":all(required.values()),

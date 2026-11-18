@@ -13,6 +13,22 @@ another model or platform.
 It preserves what was saved: goals, decisions, completed and unfinished work,
 unknowns, evidence and the next step. Unsaved internal state cannot be recovered.
 
+## When the next agent needs a starting point
+
+The draft is saved, the conversation stops, and the next agent needs to know:
+**what is current, what was actually checked, and what must not be repeated?**
+A long transcript or an old handoff alone does not answer that. Start from your
+current project files, keep their source pointers, and compare any old bundle
+without restoring it over newer work.
+
+Use this small file-based tool when you already keep a `STATE.md` and want an
+inspectable handoff without adopting a service or agent framework. It is not a
+task scheduler, automatic memory collector or checkpointed execution engine.
+
+**New in 0.4.1:** `resume --brief` shows a literal current-prefix candidate,
+with full-source fingerprints and an explicit fallback to source review. It
+does not summarize with a model or decide whether the next action is allowed.
+
 ## Quick start
 
 Requires **Python 3.10 or newer**. The standalone CLI uses only the Python
@@ -23,13 +39,51 @@ From the repository root:
 
 ```sh
 python -B scripts/not_yet_dead.py doctor
-python -B scripts/not_yet_dead.py resume --workspace examples/workspace
+python -B scripts/not_yet_dead.py resume --workspace examples/workspace --brief
+python -B scripts/demo_brief.py
 python -B scripts/demo.py
 ```
 
 The demo uses a temporary copy of synthetic sample files, exports and verifies
 a handoff, changes a current artifact, and confirms that `resume` reports the
 change without restoring the old file.
+
+## How the small view works
+
+```text
+Current STATE.md + recovery notes + approvals
+    → validate paths, read and scan complete sources, fingerprint bytes
+    → literal prefix before an explicit history heading (approvals stay whole)
+    → review_required: read excerpts + check current intent and relevant sources
+      detail_required: no excerpts; follow source paths and conflict line hints
+    → continue only within actual authority; export a new cutoff only if needed
+```
+
+`demo_brief.py` creates synthetic temporary files and checks both outcomes. It
+first returns `initial_status: review_required` and `history_omitted: true`.
+After the demo appends a correction below history, it returns
+`after_correction_status: detail_required`, `correction_line: 5` and
+`grants_execution: false`. Both inspections leave their inputs unchanged;
+only the demonstration itself writes the fixture.
+
+| Result | What the reader should do |
+| --- | --- |
+| `review_required` | Read the literal candidate, check the current user instruction, approvals and relevant original evidence. Omitted history is not proven irrelevant. |
+| `detail_required` | Read the current source region and any indicated conflict line, then follow related sources until the relevant stop, correction and authority questions are resolved. No excerpt is returned. |
+| Nonzero exit | Address the reported missing, unsafe or changing input. Do not treat failure as an empty or verified project. |
+
+The **2,000-character allowance covers all source excerpts together**, not JSON
+metadata. Approval text is never shortened. Empty current state, oversized
+excerpts or a recognized current/correction heading after history cause
+`detail_required`. Heading recognition is deliberately narrow: unrecognized
+layouts and corrections in ordinary prose may be missed; old historical
+headings may conservatively trigger review. Neither status authorizes work.
+
+Remove `--brief` for the existing wider `resume` view; `--max-chars` controls
+that preview, not the brief allowance or complete-source safety scan. The tool
+does not automatically load history into an agent or guarantee the agent follows
+its pointers. See the [brief contract](references/brief.md) and
+[Python API / compatibility](references/api.md).
 
 ## Install as an agent skill
 
@@ -51,7 +105,7 @@ existing local installations do not need to be renamed.
 | Command | Purpose |
 | --- | --- |
 | `doctor` | Check the local installation and available entry points. |
-| `resume` | Read current state, recovery notes and approvals; optionally compare an old bundle with current artifacts. |
+| `resume` | Read current state, recovery notes and approvals; add `--brief` for the small literal view, or compare an old bundle with current artifacts. |
 | `extract` | Export a portable bundle from saved JSON task/checkpoint records. |
 | `verify` | Validate a bundle's structure, file inventory, sizes and SHA-256 hashes. |
 | `export` | Export one persisted task from a compatible ninnin workbench Store. |

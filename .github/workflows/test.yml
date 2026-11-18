@@ -19,3 +19,4 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: python -B -m unittest discover -s tests -t . -v
       - run: python -B scripts/demo.py
+      - run: python -B scripts/demo_brief.py
